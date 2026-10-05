@@ -13,7 +13,9 @@ import java.util.List;
 @Repository
 public interface SolicitudRepository extends JpaRepository<Solicitud, Long> {
 
-    // Regla de Oro: Buscar si ya existe una reserva CONFIRMADA para el mismo recurso, fecha y módulo
+    List<Solicitud> findByDocenteDni(String docenteDni);
+
+
     boolean existsByRecursoIdAndFechaAndModuloHorarioAndEstado(
             Long recursoId, LocalDate fecha, Integer moduloHorario, EstadoSolicitud estado
     );

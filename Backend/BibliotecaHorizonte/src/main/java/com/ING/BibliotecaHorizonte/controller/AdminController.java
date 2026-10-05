@@ -75,7 +75,6 @@ public class AdminController {
         return ResponseEntity.ok(adminService.obtenerHistorico());
     }
 
-    // --- ENDPOINTS DE APOYO PARA PRUEBAS Y CARGA DE DATOS ---
 
     // Permite cargar los 6 recursos de la biblioteca rápidamente
     @PostMapping("/admin/inicializar-recursos")
