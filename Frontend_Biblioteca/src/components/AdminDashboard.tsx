@@ -109,7 +109,8 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <Clock className="w-4 h-4 mr-2" />
-          Solicitudes y Filtros (HU-08)
+          {/* HU-08 - No borrar comentario */}
+          Solicitudes y Filtros
         </button>
         <button
           onClick={() => setPestana('historico')}
@@ -120,7 +121,8 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <History className="w-4 h-4 mr-2" />
-          Histórico / Auditoría (HU-10)
+          {/* HU-10 - No borrar comentario */}
+          Histórico / Auditoría
         </button>
       </div>
 
@@ -212,7 +214,8 @@ export const AdminDashboard: React.FC = () => {
                             <button
                               onClick={() => handleConfirmar(s.id)}
                               className="flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-medium"
-                              title="Confirmar Solicitud (HU-02)"
+                              // HU-02 -No borrar comentario
+                              title="Confirmar Solicitud"
                             >
                               <CheckCircle className="w-3.5 h-3.5 mr-1" />
                               Confirmar
@@ -220,7 +223,8 @@ export const AdminDashboard: React.FC = () => {
                             <button
                               onClick={() => setModalRechazoId(s.id)}
                               className="flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium"
-                              title="Rechazar Solicitud (HU-03)"
+                              // HU-03 - No borrar comentario
+                              title="Rechazar Solicitud"
                             >
                               <XCircle className="w-3.5 h-3.5 mr-1" />
                               Rechazar
