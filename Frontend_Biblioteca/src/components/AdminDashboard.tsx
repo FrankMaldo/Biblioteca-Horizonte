@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { adminService } from '../services/adminService';
 import type { Solicitud, EstadoSolicitud } from '../types/solicitud';
 import { CheckCircle, XCircle, Filter, RotateCcw, Clock, History } from 'lucide-react';
+import { HistoricoReservas } from './HistoricoReservas';
 
 export const AdminDashboard: React.FC = () => {
   const [pestana, setPestana] = useState<'pendientes' | 'historico'>('pendientes');
   const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
-  const [historico, setHistorico] = useState<Solicitud[]>([]);
   
   // Filtros (HU-08)
   const [filtroEstado, setFiltroEstado] = useState<EstadoSolicitud | ''>('');
@@ -28,21 +28,9 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  const cargarHistorico = async () => {
-    try {
-      setMensajeError(null);
-      const data = await adminService.obtenerHistorico();
-      setHistorico(data);
-    } catch (err: any) {
-      setMensajeError(err.message);
-    }
-  };
-
   useEffect(() => {
     if (pestana === 'pendientes') {
       cargarSolicitudes();
-    } else {
-      cargarHistorico();
     }
   }, [pestana, filtroEstado, filtroFecha, filtroDocente]);
 
@@ -109,7 +97,7 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <Clock className="w-4 h-4 mr-2" />
-          {/* HU-08 - No borrar comentario */}
+          {/* HU-08 */}
           Solicitudes y Filtros
         </button>
         <button
@@ -121,12 +109,12 @@ export const AdminDashboard: React.FC = () => {
           }`}
         >
           <History className="w-4 h-4 mr-2" />
-          {/* HU-10 - No borrar comentario */}
+          {/* HU-10 */}
           Histórico / Auditoría
         </button>
       </div>
 
-      {pestana === 'pendientes' && (
+      {pestana === 'pendientes' ? (
         <>
           {/* Barra de Filtros Dinámicos (HU-08) */}
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-6 flex flex-wrap items-center gap-4">
@@ -134,7 +122,6 @@ export const AdminDashboard: React.FC = () => {
               <Filter className="w-4 h-4 text-gray-500" />
               <span className="font-semibold text-gray-700">Filtros:</span>
             </div>
-
             <select
               value={filtroEstado}
               onChange={(e) => setFiltroEstado(e.target.value as EstadoSolicitud | '')}
@@ -146,14 +133,12 @@ export const AdminDashboard: React.FC = () => {
               <option value="RECHAZADA">RECHAZADA</option>
               <option value="CANCELADA">CANCELADA</option>
             </select>
-
             <input
               type="date"
               value={filtroFecha}
               onChange={(e) => setFiltroFecha(e.target.value)}
               className="p-2 border border-gray-300 rounded-md text-sm bg-white"
             />
-
             <input
               type="text"
               placeholder="Buscar docente..."
@@ -161,7 +146,6 @@ export const AdminDashboard: React.FC = () => {
               onChange={(e) => setFiltroDocente(e.target.value)}
               className="p-2 border border-gray-300 rounded-md text-sm bg-white"
             />
-
             <button
               onClick={handleLimpiarFiltros}
               className="flex items-center px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md text-sm font-medium"
@@ -214,7 +198,6 @@ export const AdminDashboard: React.FC = () => {
                             <button
                               onClick={() => handleConfirmar(s.id)}
                               className="flex items-center px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-medium"
-                              // HU-02 -No borrar comentario
                               title="Confirmar Solicitud"
                             >
                               <CheckCircle className="w-3.5 h-3.5 mr-1" />
@@ -223,7 +206,6 @@ export const AdminDashboard: React.FC = () => {
                             <button
                               onClick={() => setModalRechazoId(s.id)}
                               className="flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-medium"
-                              // HU-03 - No borrar comentario
                               title="Rechazar Solicitud"
                             >
                               <XCircle className="w-3.5 h-3.5 mr-1" />
@@ -241,60 +223,14 @@ export const AdminDashboard: React.FC = () => {
             </table>
           </div>
         </>
-      )}
-
-      {pestana === 'historico' && (
-        <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100 border-b text-gray-700 text-xs uppercase tracking-wider">
-                <th className="p-4">ID</th>
-                <th className="p-4">Docente</th>
-                <th className="p-4">Recurso</th>
-                <th className="p-4">Fecha Uso</th>
-                <th className="p-4">Módulo</th>
-                <th className="p-4">Estado Final</th>
-                <th className="p-4">Motivo / Detalle</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 text-sm">
-              {historico.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-6 text-center text-gray-500">
-                    No hay registros históricos de solicitudes finalizadas.
-                  </td>
-                </tr>
-              ) : (
-                historico.map((h) => (
-                  <tr key={h.id} className="hover:bg-gray-50">
-                    <td className="p-4 font-mono text-gray-600">#{h.id}</td>
-                    <td className="p-4 font-medium text-gray-800">{h.docenteNombre}</td>
-                    <td className="p-4">{h.recurso.nombre}</td>
-                    <td className="p-4">{h.fecha}</td>
-                    <td className="p-4">Módulo {h.moduloHorario}</td>
-                    <td className="p-4">
-                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${getBadgeColor(h.estado)}`}>
-                        {h.estado}
-                      </span>
-                    </td>
-                    <td className="p-4 text-xs text-gray-600">
-                      {h.motivoRechazo ? (
-                        <span className="text-red-600 italic">Motivo: {h.motivoRechazo}</span>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      ) : (
+        /* HU-10: Componente desacoplado para el Histórico */
+        <HistoricoReservas />
       )}
 
       {/* Modal para Motivo de Rechazo (HU-03) */}
       {modalRechazoId !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
             <h3 className="text-lg font-bold text-gray-800 mb-2">Rechazar Solicitud #{modalRechazoId}</h3>
             <p className="text-sm text-gray-600 mb-4">Informa el motivo del rechazo para notificar al docente.</p>
