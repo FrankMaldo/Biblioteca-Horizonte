@@ -18,3 +18,14 @@ export interface Solicitud {
   motivoRechazo?: string;
   fechaActualizacion?: string;
 }
+
+export interface DisponibilidadModulo {
+  moduloHorario: number;
+  estado: 'LIBRE' | 'PENDIENTE' | 'CONFIRMADA';
+}
+
+export interface RecursoDisponibilidadResponse {
+  recursoId: number;
+  fecha: string;
+  disponibilidad: DisponibilidadModulo[];
+}
