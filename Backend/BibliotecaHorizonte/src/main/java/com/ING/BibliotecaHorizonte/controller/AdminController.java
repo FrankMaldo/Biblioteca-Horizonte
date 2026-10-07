@@ -91,9 +91,12 @@ public class AdminController {
         return ResponseEntity.ok(Map.of("mensaje", "Los recursos ya estaban inicializados."));
     }
 
-    // Permite crear una solicitud de prueba desde Postman
+    // HU-01 y HU-09: Crear solicitud validando que la fecha no sea pasada
     @PostMapping("/solicitudes")
     public ResponseEntity<?> crearSolicitudPrueba(@RequestBody SolicitudDTO dto) {
+        if (dto.getFecha() == null || dto.getFecha().isBefore(LocalDate.now())) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "No se pueden realizar solicitudes para fechas pasadas."));
+        }
         Recurso recurso = recursoRepository.findById(dto.getRecursoId())
                 .orElseThrow(() -> new IllegalArgumentException("Recurso no encontrado"));
 
